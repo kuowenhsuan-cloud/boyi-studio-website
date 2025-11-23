@@ -655,7 +655,7 @@ export default function StudioHome() {
             個人網站：
             <a
               className="underline"
-              href="https://www.instagram.com/kuowenhsuan/"
+              href="https://www.kuowenhsuan.com/"
               target="_blank"
               rel="noopener noreferrer"
             >
