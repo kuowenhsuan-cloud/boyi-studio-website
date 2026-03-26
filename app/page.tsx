@@ -98,30 +98,59 @@ export default function StudioHome() {
   const [links, setLinks] = useState('');
   const [message, setMessage] = useState('');
 
-  const handleSubmit = () => {
-    if (!name && !email && !size && !links && !message) {
-      alert('請先填寫至少一項資料，再送出估價需求。');
+    const handleSubmit = async () => {
+    if (!name || !email || !size || !links || !message) {
+      alert(lang === 'zh' ? '請先填寫所有欄位' : 'Please fill in all fields');
       return;
     }
 
-    const subject =
-      lang === 'zh'
-        ? '線上估價 / 裝裱需求'
-        : 'Online quotation / mounting request';
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          message: `
+作品尺寸 / Size & material: ${size}
+圖片連結 / Image links: ${links}
 
-    const bodyLines = [
-      `姓名 / 機構 (Name / Institution): ${name}`,
-      `Email: ${email}`,
-      `作品尺寸與材質 (Size & material): ${size}`,
-      `照片連結 (Image links): ${links}`,
-      `需求說明 (Description): ${message}`,
-    ];
+需求說明 / Description:
+${message}
+          `.trim(),
+        }),
+      });
 
-    const mailtoSubject = encodeURIComponent(subject);
-    const mailtoBody = encodeURIComponent(bodyLines.join('\n'));
+      const data = await res.json();
 
-    window.location.href = `mailto:kuowenhsuan@gmail.com?subject=${mailtoSubject}&body=${mailtoBody}`;
+      if (data.success) {
+        alert(lang === 'zh' ? '寄送成功' : 'Message sent successfully');
+        setName('');
+        setEmail('');
+        setSize('');
+        setLinks('');
+        setMessage('');
+      } else {
+        console.error(data);
+        alert(
+          lang === 'zh'
+            ? `寄送失敗：${data.error || '未知錯誤'}`
+            : `Failed: ${data.error || 'Unknown error'}`
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      alert(
+        lang === 'zh'
+          ? '寄送失敗，請查看 console'
+          : 'Failed to send, check console'
+      );
+    }
   };
+
+   
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
