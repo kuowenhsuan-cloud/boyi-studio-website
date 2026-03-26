@@ -1,7 +1,4 @@
 'use client';
-
-// force update
-
 import React, { useEffect, useState } from 'react';
 
 type Lang = 'zh' | 'en';
