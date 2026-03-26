@@ -20,7 +20,8 @@ function HeroSlider({ lang }: { lang: Lang }) {
     return () => clearInterval(timer);
   }, []);
 
-  return (
+  
+      return (
     <div className="relative w-full h-[70vh] md:h-[80vh] overflow-hidden border-b text-white">
       {/* 背景輪播 */}
       {images.map((src, i) => (
@@ -37,19 +38,37 @@ function HeroSlider({ lang }: { lang: Lang }) {
       {/* 黑色遮罩 */}
       <div className="absolute inset-0 bg-black/45" />
 
-      {/* 文字內容（全部靠右） */}
+      {/* 文字內容 */}
       <div className="absolute inset-0 flex items-center">
         <div className="max-w-6xl mx-auto px-4 flex flex-col items-end text-right">
-          {/* 主標 */}
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold leading-tight">
-            中國書畫裝裱與修復｜柏宜山房 Brad Studio
-          </h1>
-          {/* 副標 */}
-          <p className="mt-4 text-gray-100 text-sm md:text-base max-w-sm leading-relaxed">
-            精工修復；絹帛裝裱
-            <br />
-            文人養分，更是文化厚度。
-          </p>
+          <div className="max-w-md">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold leading-tight tracking-wide">
+              {lang === 'zh' ? (
+                <>
+                  書畫裝裱與
+                  <br className="md:hidden" />
+                  修復
+                </>
+              ) : (
+                'Mounting & Restoration'
+              )}
+            </h1>
+
+            <p className="mt-4 text-gray-100 text-sm md:text-base leading-relaxed">
+              {lang === 'zh'
+                ? '提供作品評估、裝裱與修復服務，協助判斷最適合的處理方式。'
+                : 'Assessment, mounting and restoration services. We advise the most suitable approach for each artwork.'}
+            </p>
+
+            <div className="mt-6">
+              <a
+                href="#contact"
+                className="inline-block border border-white px-6 py-2 text-sm transition hover:bg-white hover:text-black"
+              >
+                {lang === 'zh' ? '線上估價 / 預約' : 'Get a Quote'}
+              </a>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -265,102 +284,86 @@ export default function StudioHome() {
       </section>
 
       {/* Team */}
-      <section id="team" className="border-b bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-20 text-center">
-          <h2 className="text-2xl md:text-3xl font-semibold mb-8">
-            {lang === 'zh' ? '團隊成員 Team' : 'Team'}
-          </h2>
-          <p className="text-gray-600 text-sm">
-            {lang === 'zh'
-              ? '柏宜山房由多位專業成員組成，融合傳統裝裱工藝、木作結構與保存修復技術。'
-              : 'Brad Studio brings together specialists in mounting, woodworking and conservation-oriented craft.'}
-          </p>
-          <div className="mt-10 grid md:grid-cols-4 gap-8 text-left">
-            {[
-              {
-                name: '甘柏宜 Bradley James Gardner（1982–2014）',
-                title:
-                  lang === 'zh'
-                    ? '永遠的夥伴 · In Memoriam'
-                    : 'Our enduring partner · In Memoriam',
-                img: '/optimized/bradley-small.jpg',
-                desc:
-                  lang === 'zh'
-                    ? '以誠實與專注實踐東方裝裱工藝，對柏宜山房之成立與倫理奠基具有關鍵意義。'
-                    : 'His honesty and focus in practicing East Asian mounting crafts laid the ethical foundation of Brad Studio.',
-              },
-              {
-                name: '郭汶瑄 Wen-Hsuan Kuo',
-                title:
-                  lang === 'zh'
-                    ? '裝裱與修復總監'
-                    : 'Director of mounting & restoration',
-                img: '/optimized/kuo-small.jpg',
-                desc:
-                  lang === 'zh'
-                    ? '專長於書畫修復與可逆性裝裱技術，結合傳統與保存倫理，現為柏宜山房創辦人。'
-                    : 'Specialized in painting and calligraphy restoration and reversible mounting methods; founder of Brad Studio.',
-                link: 'https://www.instagram.com/kuowenhsuan/',
-              },
-              {
-                name: '呂兪樺 Ly Yu-Hua',
-                title:
-                  lang === 'zh'
-                    ? '陶作與紙本結構設計師'
-                    : 'Ceramic & paper structure designer',
-                img: '/optimized/ly_yuhua-small.jpg',
-                desc:
-                  lang === 'zh'
-                    ? '以陶藝與紙本材料實驗為核心，協助開發裝裱與保存相關結構性部件，結合工藝與研究。'
-                    : 'Works across ceramics and paper-based experiments, developing structural components for mounting and preservation.',
-              },
-              {
-                name: '黃士桓 Huang Shih-Huan',
-                title:
-                  lang === 'zh'
-                    ? '木工師、3D 繪圖設計師'
-                    : 'Woodworker & 3D designer',
-                img: '/optimized/huang_shihhuan-small.jpg',
-                desc:
-                  lang === 'zh'
-                    ? '專注於畫框結構與榫卯製作，結合傳統工法與現代設計，並以 3D 建模輔助製作流程。'
-                    : 'Focuses on frame structures and joinery, integrating traditional techniques with modern design and 3D modeling.',
-                link: 'https://www.instagram.com/shih.artstudio/',
-              },
-            ].map((m, i) => (
-              <figure
-                key={i}
-                className="rounded-2xl border p-5 hover:shadow-sm"
-              >
-                <img
-                  src={m.img}
-                  alt={m.name}
-                  className="rounded-xl mb-4 object-cover w-full aspect-square"
-                />
-                <figcaption>
-                  <div className="font-medium">{m.name}</div>
-                  <div className="text-sm text-gray-600 mt-1">
-                    {m.title}
-                  </div>
-                  <p className="text-sm text-gray-500 mt-2 leading-relaxed">
-                    {m.desc}
-                  </p>
-                  {'link' in m && (m as any).link && (
-                    <a
-                      href={(m as any).link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block mt-3 text-sm underline"
-                    >
-                      Instagram →
-                    </a>
-                  )}
-                </figcaption>
-              </figure>
-            ))}
-          </div>
+<section id="team" className="border-b bg-white">
+  <div className="mx-auto max-w-6xl px-4 py-16 text-center">
+
+    <h2 className="text-2xl md:text-3xl font-semibold mb-6">
+      {lang === 'zh' ? '團隊成員 Team' : 'Team'}
+    </h2>
+
+    <p className="text-gray-600 text-sm mb-12 max-w-xl mx-auto">
+      {lang === 'zh'
+        ? '柏宜山房由當前核心成員持續運作，並承接其創立以來的工藝精神與保存實踐。'
+        : 'Brad Studio is sustained by its current core members, continuing the studio’s foundational philosophy of craft and conservation.'}
+    </p>
+
+    {/* 上：柏利（單獨） */}
+    <div className="mb-12 flex justify-center">
+      <div className="max-w-sm text-left">
+        <img
+          src="/optimized/bradley-small.jpg"
+          alt="Bradley James Gardner"
+          className="rounded-xl mb-4 object-cover w-full aspect-square"
+        />
+        <div className="font-medium">
+          甘柏宜 Bradley James Gardner（1982–2014）
         </div>
-      </section>
+        <p className="text-sm text-gray-500 mt-2 leading-relaxed">
+          {lang === 'zh'
+            ? '永遠的夥伴（In Memoriam）。其對東方裝裱工藝的專注與實踐，奠定了工作室的核心精神。'
+            : 'Our enduring partner (In Memoriam). His dedication to East Asian mounting laid the ethical foundation of the studio.'}
+        </p>
+      </div>
+    </div>
+
+    {/* 下：兩位並排 */}
+    <div className="grid md:grid-cols-2 gap-8 text-left max-w-4xl mx-auto">
+
+      {/* 你 */}
+      <div>
+        <img
+          src="/optimized/kuo-small.jpg"
+          alt="Wen-Hsuan Kuo"
+          className="rounded-xl mb-4 object-cover w-full aspect-square"
+        />
+        <div className="font-medium">
+          郭汶瑄 Wen-Hsuan Kuo
+        </div>
+        <p className="text-sm text-gray-500 mt-2 leading-relaxed">
+          {lang === 'zh'
+            ? '專長書畫裝裱修復與可逆性裝裱技術，結合傳統與保存修復理念，現為柏宜山房負責人。'
+            : 'Specialized in mounting and restoration, integrating traditional methods with conservation practice. Director of Brad Studio.'}
+        </p>
+        <a
+          href="https://www.instagram.com/kuowenhsuan/"
+          target="_blank"
+          className="inline-block mt-3 text-sm underline"
+        >
+          Instagram →
+        </a>
+      </div>
+
+      {/* 呂兪樺 */}
+      <div>
+        <img
+          src="/optimized/lu_yuhua-small.jpg"
+          alt="Yu-Hua Lu"
+          className="rounded-xl mb-4 object-cover w-full aspect-square"
+        />
+        <div className="font-medium">
+          呂兪樺 Yu-Hua Lu
+        </div>
+        <p className="text-sm text-gray-500 mt-2 leading-relaxed">
+          {lang === 'zh'
+            ? '陶藝與紙材結構設計，協助裝裱結構與材料應用，參與工藝研究與實驗。'
+            : 'Works across ceramics and paper-based structures, contributing to mounting techniques and material research.'}
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
 
       {/* Studio Images – 先保留原本輪播或改成之後再調整 */}
       <section id="studio-images" className="border-t bg-gray-50">
@@ -422,75 +425,118 @@ export default function StudioHome() {
         </div>
       </section>
 
-      {/* About – 依語言切換 */}
-      {lang === 'zh' && (
-        <section id="about" className="border-b bg-gray-50">
-          <div className="mx-auto max-w-6xl px-4 py-16 text-left">
-            <h2 className="text-2xl md:text-3xl font-semibold text-center">
-              關於柏宜山房
-            </h2>
-            <p className="mt-6 text-gray-700 leading-relaxed text-sm md:text-base whitespace-pre-line">
-              「柏宜山房」座落在台北市松山區，前身為 2012 年創立的「墨廊」。草創時期之所以以「墨」為名，
-              除了指涉筆墨創作，也期盼回應空間成立的初衷──服膺墨家「兼愛」思想。
+      {/* About - 依語言切換 */}
+<>
+  {lang === 'zh' && (
+    <section id="about" className="border-b bg-gray-50">
+      <div className="mx-auto max-w-6xl px-4 py-16">
+        <h2 className="text-2xl md:text-3xl font-semibold text-center">
+          關於柏宜山房
+        </h2>
 
-              2014 年，空間正式更名為「柏宜山房」（Brad Studio），此一命名同時也是為紀念曾一同學習的夥伴及摯友
-              Bradley James Gardner 甘柏宜（1982–2014）。
+        <div className="mt-8 max-w-3xl text-sm md:text-base text-gray-700 leading-relaxed space-y-6">
+          <p className="font-medium text-gray-900">
+            柏宜山房位於台北，成立於2012年，專注於中國書畫裝裱與修復。
+          </p>
 
-              在山房裡的每一位夥伴，都具有相同的信念：從自身熱愛藝術的內心出發，透過裝裱形式的助益，
-              推動優質藏品的流通，最終回歸創作本質。我們相信，無論是對創作者、收藏家、裝裱工作夥伴或藝文相關產業，
-              均能形成一個共生共利的良性循環生態；並藉由彼此的合作與分享，促進藝術產業中穩定而持續的交流與經驗累積。
-            </p>
-          </div>
-        </section>
-      )}
+          <p>
+            工作室建立於長期工藝實踐與材料理解之上，
+            並以裝裱作為藝術保存條件的延伸。
+            在長期實務中，我們面對的不僅是形式修復，
+            而是在時間中的變化、材料與再判斷之間建立關係並依作品狀況提供個別化處理建議。
+          </p>
 
-      {lang === 'en' && (
-        <section id="about-en" className="border-b bg-white">
-          <div className="mx-auto max-w-6xl px-4 py-16 text-left">
-            <h2 className="text-2xl md:text-3xl font-semibold text-center">
-              About Brad Studio
-            </h2>
-            <p className="mt-6 text-gray-700 leading-relaxed text-sm md:text-base whitespace-pre-line">
-              Brad Studio is located in Songshan District, Taipei. Its
-              predecessor, “Ink Gallery,” was established in 2012 as a space
-              dedicated to ink-based art in this neighborhood. The name “Ink”
-              was chosen not only to reflect the spirit of brush-and-ink
-              creation, but also to embody a founding philosophy inspired by
-              the Mohist ideal of universal love.
+          <p>
+            2014年，工作室以「Brad Studio」之名，
+            紀念合作夥伴 甘柏宜，Bradley James Gardner（1982–2014）。
+          </p>
 
-              In 2014, the studio was renamed “Brad Studio” (Boyi Shan Fang) in
-              memory of our close friend and collaborator, Bradley James
-              Gardner (1982–2014).
+          <hr className="my-2 border-gray-200" />
 
-              Each member of the studio shares the same belief: beginning from
-              a genuine passion for art, we seek to assist and preserve through
-              the craft of mounting—supporting the circulation of significant
-              works while ultimately returning to the essence of creation. We
-              believe that, through collaboration among artists, collectors,
-              craftspeople and the cultural sector, an ecosystem of mutual
-              benefit and shared growth can emerge, fostering sustained
-              exchange and the accumulation of experience in the field of art.
-            </p>
-          </div>
-        </section>
-      )}
-
-      {/* LA Studio 計劃中 */}
-      <section id="la-studio" className="border-b bg-gray-50 text-center">
-        <div className="mx-auto max-w-6xl px-4 py-16">
-          <h2 className="text-2xl md:text-3xl font-semibold">
-            Brad Studio LA｜加州工作室計劃
-          </h2>
-          <p className="mt-4 text-gray-600 text-sm leading-relaxed">
-            柏宜山房目前正規劃於未來在美國加州成立新據點，延伸中國書畫裝裱與修復工藝，
-            並作為東方紙本藝術保存與研究的國際節點。相關進度與細節將於後續公布。
-            <br />
-            <span className="text-xs text-gray-400">
-              Coming Soon · Los Angeles, California（籌備中）
-            </span>
+          <p>
+            本工作室採用可逆性（reversible）處理原則，
+            所有裝裱與修復介入，皆以不破壞原作為前提，
+            並保留未來再處理與再判斷的可能性。
+          
+            在每件作品處理前，
+            我們進行結構與材質評估，
+            包括紙質纖維狀態、裝裱層結構、
+            歷史修復痕跡與展示條件，
+            以制定相應的處理方式。
+          
+            裝裱在此不僅作為形式完成，
+            而是一種對作品長期保存的結構介入。
+            修復亦非單純回復視覺，
+            而是在歷史、材料與時間之間，
+            建立可持續存在的平衡關係。
+         
+            柏宜山房的實踐，
+            建立於工藝技術、材料理解與保存倫理之上，
+            其核心並非改變作品，
+            而是延長其在時間中的存在條件。
           </p>
         </div>
-      </section>
+      </div>
+    </section>
+  )}
+
+  {lang === 'en' && (
+    <section id="about-en" className="border-b bg-white">
+      <div className="mx-auto max-w-6xl px-4 py-16">
+        <h2 className="text-2xl md:text-3xl font-semibold text-center">
+          About Brad Studio
+        </h2>
+
+        <div className="mt-8 max-w-3xl text-sm md:text-base text-gray-700 leading-relaxed space-y-6">
+          <p className="font-medium text-gray-900">
+            Brad Studio is based in Taipei, specializing in the mounting and restoration of traditional Chinese paintings.
+          </p>
+
+          <p>
+            Our practice is grounded in long-term craftsmanship and material understanding,
+            treating mounting as an extension of the conditions for preservation.
+            In sustained studio work, we confront not only formal repair,
+            but also the relationship between change over time, material condition, and future reassessment.
+          </p>
+
+          <p>
+            In 2014, the studio adopted the name “Brad Studio”
+            in memory of collaborator Bradley James Gardner (1982–2014).
+          </p>
+
+          <hr className="my-2 border-gray-200" />
+
+          <p>
+            All treatments follow a reversible approach.
+            Any intervention in mounting or restoration is made on the condition that the original work is not harmed,
+            while preserving the possibility of future treatment and renewed judgment.
+          </p>
+
+          <p>
+            Before each work is treated,
+            we assess its structure and material condition,
+            including paper fibers, mounting layers,
+            traces of previous restorations, and display conditions,
+            in order to determine an appropriate course of treatment.
+          </p>
+
+          <p>
+            Mounting is understood not merely as a finishing process,
+            but as a structural intervention for the long-term preservation of the work.
+            Restoration is not simply the recovery of appearance,
+            but the establishment of a sustainable balance between history, material, and time.
+          </p>
+
+          <p>
+            The practice of Brad Studio is rooted in craftsmanship, material knowledge, and conservation ethics.
+            Its purpose is not to alter the work,
+            but to extend the conditions of its existence over time.
+          </p>
+        </div>
+      </div>
+    </section>
+  )}
+</>
 
       {/* Pricing */}
       <section id="pricing" className="border-b bg-white">
@@ -501,22 +547,32 @@ export default function StudioHome() {
               : 'Reference price ranges'}
           </h2>
           <ul className="mt-6 text-sm text-gray-700 leading-7 list-disc list-inside">
-            <li>
-              {lang === 'zh'
-                ? '立軸 NT$10,000 起（完成尺寸每才 900 起）'
-                : 'Hanging scrolls from NT$10,000 (from NT$900 per tsai of finished size).'}
-            </li>
-            <li>
-              {lang === 'zh'
-                ? '框裱 NT$6,000 起'
-                : 'Framing from NT$6,000.'}
-            </li>
-            <li>
-              {lang === 'zh'
-                ? '修復 NT$1,500–5,000 / 時（基本收費 8,000 起；依尺寸／年代／複雜度調整）'
-                : 'Restoration NT$1,500–5,000 / hour (basic fee from NT$8,000; depending on size, age and complexity).'}
-            </li>
-          </ul>
+  <li>
+    {lang === 'zh'
+      ? '立軸裝裱：NT$12,000 起'
+      : 'Hanging scrolls: from NT$12,000'
+    }
+  </li>
+
+  <li>
+    {lang === 'zh'
+      ? '畫框裝裱：NT$8,000 起'
+      : 'Framing: from NT$8,000'
+    }
+  </li>
+
+  <li>
+    {lang === 'zh'
+      ? '書畫修復與保存處理：基本費用 NT$15,000 起'
+      : 'Restoration: base fee from NT$15,000'
+    }
+  </li>
+</ul>
+<p className="mt-4 text-xs text-gray-500">
+  {lang === 'zh'
+    ? '實際費用將依作品尺寸、年代與保存狀況進行評估。'
+    : 'Final pricing depends on size, age, and condition of the artwork.'}
+</p>
         </div>
       </section>
 
@@ -643,6 +699,24 @@ export default function StudioHome() {
           </div>
         </div>
       </section>
+      {/* LA Studio */}
+<section id="la-studio" className="border-b bg-gray-50 text-center">
+  <div className="mx-auto max-w-4xl px-4 py-12">
+    <h3 className="text-lg font-medium text-gray-600">
+      {lang === 'zh' ? '加州工作室計劃' : 'Los Angeles Studio Plan'}
+    </h3>
+    <p className="mt-3 text-sm text-gray-500 leading-relaxed">
+      {lang === 'zh'
+        ? '未來計畫：於洛杉磯設立工作據點，持續發展書畫裝裱與修復實踐。'
+        : 'Future plan: establishing a working base in Los Angeles for mounting and conservation practice.'}
+    </p>
+    <p className="mt-2 text-xs text-gray-400">
+      {lang === 'zh'
+        ? 'Coming Soon · Los Angeles, California（籌備中）'
+        : 'Coming Soon · Los Angeles, California'}
+    </p>
+  </div>
+</section>
 
       {/* Footer */}
       <footer role="contentinfo" className="border-t">
