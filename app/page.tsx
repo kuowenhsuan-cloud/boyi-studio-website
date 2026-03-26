@@ -602,9 +602,9 @@ ${message}
     </p>
 
     <form
-      className="mt-8 grid md:grid-cols-2 gap-6"
-      onSubmit={handleSubmit}
-    >
+  className="mt-8 grid md:grid-cols-2 gap-6"
+  onSubmit={handleSubmit}
+>
       <input
         className="border rounded-xl px-4 py-3"
         placeholder={lang === 'zh' ? '姓名 / 機構' : 'Name / Institution'}
@@ -654,14 +654,11 @@ ${message}
       />
 
       <div className="md:col-span-2">
-        <button
-  type="button"
-  onClick={handleSubmit}
+       <button
+  type="submit"
   className="rounded-2xl px-5 py-3 border shadow hover:shadow-md"
 >
-  {lang === 'zh'
-    ? '送出需求（將開啟 Email）'
-    : 'Send request'}
+  {lang === 'zh' ? '送出需求' : 'Send request'}
 </button>
       </div>
     </form>
