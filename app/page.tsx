@@ -603,7 +603,7 @@ ${message}
 
     <form
   className="mt-8 grid md:grid-cols-2 gap-6"
-  onSubmit={handleSubmit}
+  onSubmit={(e) => handleSubmit(e)}
 >
       <input
         className="border rounded-xl px-4 py-3"
