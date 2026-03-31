@@ -59,16 +59,13 @@ export async function POST(req: Request) {
     const name = String(body.name || '').trim();
     const email = String(body.email || '').trim();
     const message = String(body.message || '').trim();
-
-    const website = String(body.website || '').trim(); // honeypot
+    const website = String(body.website || '').trim();
     const formStartedAt = Number(body.formStartedAt || 0);
 
-    // honeypot：機器人會填這個
     if (website) {
       return NextResponse.json({ success: true });
     }
 
-    // ✅ 寬鬆版 time trap（只擋極端快送）
     const now = Date.now();
     if (formStartedAt && now - formStartedAt < 1000) {
       return NextResponse.json(
@@ -96,11 +93,11 @@ export async function POST(req: Request) {
     const safeEmail = escapeHtml(email || '');
     const safeMessage = escapeHtml(message || '').replace(/\n/g, '<br />');
 
-    const html = `
+    // 寄給你自己的通知信
+    const ownerHtml = `
 <div style="margin:0;padding:0;background:#f5f1ea;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
   <div style="max-width:640px;margin:0 auto;padding:40px 20px;">
     <div style="background:#ffffff;border:1px solid #e8e1d6;">
-      
       <div style="padding:32px 32px 20px 32px;border-bottom:1px solid #eee7dc;">
         <div style="font-size:12px;letter-spacing:1.5px;color:#8a7f70;text-transform:uppercase;margin-bottom:10px;">
           Boyi Studio
@@ -112,12 +109,10 @@ export async function POST(req: Request) {
 
       <div style="padding:28px 32px;">
         <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
-          
           <tr>
             <td style="padding:0 0 16px 0;color:#8a7f70;font-size:13px;width:90px;">姓名</td>
             <td style="padding:0 0 16px 0;color:#1f1a17;font-size:15px;">${safeName}</td>
           </tr>
-
           <tr>
             <td style="padding:0 0 16px 0;color:#8a7f70;font-size:13px;">Email</td>
             <td style="padding:0 0 16px 0;color:#1f1a17;font-size:15px;">
@@ -126,14 +121,12 @@ export async function POST(req: Request) {
               </a>
             </td>
           </tr>
-
           <tr>
             <td style="padding:0 0 8px 0;color:#8a7f70;font-size:13px;vertical-align:top;">內容</td>
             <td style="padding:0 0 8px 0;color:#1f1a17;font-size:15px;line-height:1.8;">
               ${safeMessage}
             </td>
           </tr>
-
         </table>
       </div>
 
@@ -150,13 +143,12 @@ export async function POST(req: Request) {
         This message was generated from brad-studio.com<br />
         Time is not represented. It is anchored.
       </div>
-
     </div>
   </div>
 </div>
 `;
 
-    const text = [
+    const ownerText = [
       `姓名：${name}`,
       `Email：${email}`,
       '',
@@ -164,26 +156,94 @@ export async function POST(req: Request) {
       message,
     ].join('\n');
 
-    const result = await resend.emails.send({
+    const ownerResult = await resend.emails.send({
       from: fromEmail,
       to: [toEmail],
       subject: `Brad Studio 線上估價需求｜${name}`,
       replyTo: email,
-      html,
-      text,
+      html: ownerHtml,
+      text: ownerText,
     });
 
-    if (result.error) {
-      console.error('RESEND_SEND_ERROR:', result.error);
+    if (ownerResult.error) {
+      console.error('OWNER_EMAIL_ERROR:', ownerResult.error);
       return NextResponse.json(
-        { error: '寄信失敗', detail: result.error },
+        { error: '寄信失敗', detail: ownerResult.error },
         { status: 500 }
       );
     }
 
+    // 自動回覆給客戶
+    const customerHtml = `
+<div style="margin:0;padding:0;background:#f5f1ea;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <div style="max-width:640px;margin:0 auto;padding:40px 20px;">
+    <div style="background:#ffffff;border:1px solid #e8e1d6;">
+      <div style="padding:32px 32px 20px 32px;border-bottom:1px solid #eee7dc;">
+        <div style="font-size:12px;letter-spacing:1.5px;color:#8a7f70;text-transform:uppercase;margin-bottom:10px;">
+          Boyi Studio / 柏宜山房
+        </div>
+        <h1 style="margin:0;font-size:24px;line-height:1.4;font-weight:500;color:#1f1a17;">
+          已收到您的詢問
+        </h1>
+      </div>
+
+      <div style="padding:28px 32px;color:#1f1a17;font-size:15px;line-height:1.9;">
+        <p style="margin:0 0 16px 0;">${safeName} 您好，</p>
+        <p style="margin:0 0 16px 0;">
+          我們已收到您透過 brad-studio.com 提交的詢問。
+        </p>
+        <p style="margin:0 0 16px 0;">
+          通常會於 1–3 個工作天內回覆。若您之後想補充作品照片、尺寸或其他說明，也可直接回覆此信。
+        </p>
+        <div style="margin:24px 0;padding:18px 20px;background:#faf7f2;border:1px solid #eee7dc;">
+          <div style="font-size:13px;color:#8a7f70;margin-bottom:8px;">您本次提交的內容</div>
+          <div style="font-size:14px;color:#1f1a17;line-height:1.8;">${safeMessage}</div>
+        </div>
+        <p style="margin:0 0 16px 0;">
+          柏宜山房 / Brad Studio<br />
+          台北｜中國書畫裝裱與修復
+        </p>
+      </div>
+
+      <div style="padding:20px 32px;background:#faf7f2;border-top:1px solid #eee7dc;color:#8a7f70;font-size:12px;line-height:1.6;">
+        This is an automatic confirmation email from brad-studio.com.
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+    const customerText = [
+      `${name} 您好：`,
+      '',
+      '我們已收到您透過 brad-studio.com 提交的詢問。',
+      '通常會於 1–3 個工作天內回覆。',
+      '若您之後想補充作品照片、尺寸或其他說明，也可直接回覆此信。',
+      '',
+      '您本次提交的內容：',
+      message,
+      '',
+      '柏宜山房 / Brad Studio',
+      '台北｜中國書畫裝裱與修復',
+    ].join('\n');
+
+    const customerResult = await resend.emails.send({
+      from: fromEmail,
+      to: [email],
+      subject: '柏宜山房 Brad Studio｜已收到您的詢問',
+      html: customerHtml,
+      text: customerText,
+    });
+
+    if (customerResult.error) {
+      console.error('CUSTOMER_EMAIL_ERROR:', customerResult.error);
+      // 不讓整體失敗，只記錄
+    }
+
     return NextResponse.json({
       success: true,
-      data: result.data,
+      data: ownerResult.data,
+      autoReplySent: !customerResult.error,
     });
   } catch (error) {
     console.error('CONTACT_API_ERROR:', error);
