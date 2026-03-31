@@ -36,23 +36,9 @@ export async function POST(req: Request) {
     const toEmail = process.env.CONTACT_TO_EMAIL;
     const fromEmail = process.env.CONTACT_FROM_EMAIL;
 
-    if (!apiKey) {
+    if (!apiKey || !toEmail || !fromEmail) {
       return NextResponse.json(
-        { error: 'RESEND_API_KEY is missing' },
-        { status: 500 }
-      );
-    }
-
-    if (!toEmail) {
-      return NextResponse.json(
-        { error: 'CONTACT_TO_EMAIL is missing' },
-        { status: 500 }
-      );
-    }
-
-    if (!fromEmail) {
-      return NextResponse.json(
-        { error: 'CONTACT_FROM_EMAIL is missing' },
+        { error: 'Email 環境變數缺失' },
         { status: 500 }
       );
     }
@@ -62,7 +48,7 @@ export async function POST(req: Request) {
 
     if (!checkRateLimit(ip)) {
       return NextResponse.json(
-        { error: 'Too many requests. Please try again later.' },
+        { error: '請勿短時間重複送出' },
         { status: 429 }
       );
     }
@@ -73,17 +59,20 @@ export async function POST(req: Request) {
     const name = String(body.name || '').trim();
     const email = String(body.email || '').trim();
     const message = String(body.message || '').trim();
+
     const website = String(body.website || '').trim(); // honeypot
     const formStartedAt = Number(body.formStartedAt || 0);
 
+    // honeypot：機器人會填這個
     if (website) {
       return NextResponse.json({ success: true });
     }
 
+    // ✅ 寬鬆版 time trap（只擋極端快送）
     const now = Date.now();
-    if (!formStartedAt || now - formStartedAt < 3000) {
+    if (formStartedAt && now - formStartedAt < 1000) {
       return NextResponse.json(
-        { error: 'Submission blocked.' },
+        { error: '送出過快，請稍後再試' },
         { status: 400 }
       );
     }
@@ -111,6 +100,7 @@ export async function POST(req: Request) {
 <div style="margin:0;padding:0;background:#f5f1ea;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
   <div style="max-width:640px;margin:0 auto;padding:40px 20px;">
     <div style="background:#ffffff;border:1px solid #e8e1d6;">
+      
       <div style="padding:32px 32px 20px 32px;border-bottom:1px solid #eee7dc;">
         <div style="font-size:12px;letter-spacing:1.5px;color:#8a7f70;text-transform:uppercase;margin-bottom:10px;">
           Boyi Studio
@@ -122,10 +112,12 @@ export async function POST(req: Request) {
 
       <div style="padding:28px 32px;">
         <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+          
           <tr>
             <td style="padding:0 0 16px 0;color:#8a7f70;font-size:13px;width:90px;">姓名</td>
             <td style="padding:0 0 16px 0;color:#1f1a17;font-size:15px;">${safeName}</td>
           </tr>
+
           <tr>
             <td style="padding:0 0 16px 0;color:#8a7f70;font-size:13px;">Email</td>
             <td style="padding:0 0 16px 0;color:#1f1a17;font-size:15px;">
@@ -134,12 +126,14 @@ export async function POST(req: Request) {
               </a>
             </td>
           </tr>
+
           <tr>
             <td style="padding:0 0 8px 0;color:#8a7f70;font-size:13px;vertical-align:top;">內容</td>
             <td style="padding:0 0 8px 0;color:#1f1a17;font-size:15px;line-height:1.8;">
               ${safeMessage}
             </td>
           </tr>
+
         </table>
       </div>
 
@@ -156,6 +150,7 @@ export async function POST(req: Request) {
         This message was generated from brad-studio.com<br />
         Time is not represented. It is anchored.
       </div>
+
     </div>
   </div>
 </div>
@@ -181,7 +176,7 @@ export async function POST(req: Request) {
     if (result.error) {
       console.error('RESEND_SEND_ERROR:', result.error);
       return NextResponse.json(
-        { error: 'Resend send failed', detail: result.error },
+        { error: '寄信失敗', detail: result.error },
         { status: 500 }
       );
     }
@@ -193,7 +188,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error('CONTACT_API_ERROR:', error);
     return NextResponse.json(
-      { error: '寄信失敗，請稍後再試' },
+      { error: '系統錯誤，請稍後再試' },
       { status: 500 }
     );
   }
